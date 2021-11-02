@@ -19,7 +19,7 @@ segment '__TEXT' readable executable
 
   start:
     and	rsp,0xFFFFFFFFFFFFFFF0
-    sub rsp, 0x12
+    sub rsp, 0x10
 
     mov DWORD [rsp + 0x8], 0x3
     mov DWORD [rsp + 0x4], 0x2
@@ -27,21 +27,21 @@ segment '__TEXT' readable executable
 
     call three_sum
 
-    mov rsi, rax
+    mov rsi, rdx
     lea	rdi,[msg]
     xor rax, rax
-	call printf
+	  call printf
 
-	xor	rdi, rdi
-	call exit
+	  xor	rdi, rdi
+	  call exit
 
-  three_sum: ; func that adds three nums and returns the result
-    ; stack preparation
-    push rbp
+  ; func that adds three nums and returns the result
+  three_sum:
     mov rbp,rsp
 
     ; memory allocation for local variables
-    ; sub rsp, 0x10
+    ; alligned for 16 as gcc requires 
+    sub rsp, 0x10
 
     mov eax, DWORD [rbp + 0xc]
     mov edx, DWORD [rbp + 0x8]
@@ -50,13 +50,12 @@ segment '__TEXT' readable executable
     
     ; saves the calculations from eax register
     ; into local variable assigned at this function's stack
-    ; mov DWORD [rbp - 0x4], eax
+    mov DWORD [rsp + 0x4], eax
+    
+    ; saves the value of local variable into return register
+    mov edx, [rsp + 0x4]
 
-    ; moves the local variable into eax that will be
-    ; checked for function's return value
-    ; mov eax, DWORD [rbp - 0x4]
-
-    pop rbp
+    add rsp, 0x10
     ret
 
   section '__cstring' align 4
