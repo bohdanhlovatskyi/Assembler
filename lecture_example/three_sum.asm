@@ -29,8 +29,11 @@ segment '__TEXT' readable executable
 
     mov rsi, rdx
     lea	rdi,[msg]
+
     xor rax, rax
 	  call printf
+
+    add rsp, 0x10
 
 	  xor	rdi, rdi
 	  call exit
@@ -53,6 +56,8 @@ segment '__TEXT' readable executable
     mov DWORD [rsp + 0x4], eax
     
     ; saves the value of local variable into return register
+    ; !!! note that by convention c-function will check return value
+    ; in the rax register
     mov edx, [rsp + 0x4]
 
     add rsp, 0x10
