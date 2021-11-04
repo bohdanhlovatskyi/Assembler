@@ -11,6 +11,8 @@ uses '/usr/lib/libSystem.B.dylib' (1.0.0, 1226.10.1)
 import printf,'_printf'
 import exit,'_exit'
 
+extern three_sum
+
 segment '__TEXT' readable executable
 
   section '__text' align 16
@@ -30,6 +32,7 @@ segment '__TEXT' readable executable
     mov rsi, rdx
     lea	rdi,[msg]
 
+    ; numbers of xmm registers used
     xor rax, rax
 	  call printf
 
@@ -37,31 +40,6 @@ segment '__TEXT' readable executable
 
 	  xor	rdi, rdi
 	  call exit
-
-  ; func that adds three nums and returns the result
-  three_sum:
-    mov rbp,rsp
-
-    ; memory allocation for local variables
-    ; alligned for 16 as gcc requires 
-    sub rsp, 0x10
-
-    mov eax, DWORD [rbp + 0xc]
-    mov edx, DWORD [rbp + 0x8]
-    add eax, edx
-    add eax, DWORD [rbp + 0x10]
-    
-    ; saves the calculations from eax register
-    ; into local variable assigned at this function's stack
-    mov DWORD [rsp + 0x4], eax
-    
-    ; saves the value of local variable into return register
-    ; !!! note that by convention c-function will check return value
-    ; in the rax register
-    mov edx, [rsp + 0x4]
-
-    add rsp, 0x10
-    ret
 
   section '__cstring' align 4
 
