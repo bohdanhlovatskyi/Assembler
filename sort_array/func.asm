@@ -29,10 +29,6 @@ section '__TEXT':'__text'
     ; distinuish them
     mov r8, 1
 
-    cmp r8, rsi ; int i = 1
-    jb outer_loop ; if i < size: go to loop
-    jge outer_loop_end ; if i >= size : end the loop, return the res
-
 outer_loop:
     mov r10d, [rdi + 4 * r8] ; key = data[i]
     mov r9, r8               ; j = i - 1
