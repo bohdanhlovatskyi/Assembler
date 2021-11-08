@@ -11,12 +11,10 @@ uses '/usr/lib/libSystem.B.dylib' (1.0.0, 1226.10.1)
 import printf,'_printf'
 import exit,'_exit'
 
-extern three_sum
+  section '__text' executable
 
-segment '__TEXT' readable executable
-
-  section '__text' align 16
-
+  extrn three_sum
+  
   entry start
 
   start:

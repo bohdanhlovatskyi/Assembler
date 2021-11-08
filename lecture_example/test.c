@@ -6,6 +6,7 @@ int main(void) {
     int b = 2;
     int c = 3;
 
-    printf("Result: %d\n", three_sum(a, b, b));
-    c += a + b;
+    int d = three_sum(a, b, c);
+
+    printf("Result: %d\n", d);
 }

@@ -3,3 +3,7 @@ macos
 inc_folders
 cpu
 format
+examples
+.vscode
+.DS_Store
+*.out

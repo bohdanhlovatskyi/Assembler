@@ -19,14 +19,13 @@ section '__TEXT':'__text'
     ; alligned for 16 as gcc requires 
     sub rsp, 0x10
 
-    mov eax, DWORD [rbp + 0xc]
-    mov edx, DWORD [rbp + 0x8]
-    add eax, edx
-    add eax, DWORD [rbp + 0x10]
-    
+    mov rax, rdi
+    add rax, rsi
+    add rax, rdx
+  
     ; saves the calculations from eax register
     ; into local variable assigned at this function's stack
-    mov DWORD [rsp + 0x4], eax
+    mov DWORD [rsp + 0x4], rax
     
     ; saves the value of local variable into return register
     ; !!! note that by convention c-function will check return value
