@@ -1,7 +1,7 @@
 
 #include "func.h"
 
-const size_t s = 5;
+const size_t s = 6;
 
 int main(void) {
 
@@ -12,6 +12,7 @@ int main(void) {
     arr[2] = 5;
     arr[3] = 1;
     arr[4] = 9;
+    arr[5] = 9;
 
     func(arr, s);
 
