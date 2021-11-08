@@ -1,63 +1,71 @@
+
 include 'cpu/x64.inc'
 use64
 
+MachO.Settings.FileType equ MH_OBJECT
 MachO.Settings.ProcessorType equ CPU_TYPE_X86_64
-MachO.Settings.BaseAddress = 0x1000000
-
+MachO.Settings.ProcessorSubtype equ CPU_SUBTYPE_X86_64_ALL
 include 'format/macho.inc'
 
-interpreter '/usr/lib/dyld'
-uses '/usr/lib/libSystem.B.dylib' (1.0.0, 1226.10.1)
-import printf,'_printf'
-import exit,'_exit'
+section '__TEXT':'__text'
 
-segment '__TEXT' readable executable
+  public _func
 
-  section '__text' align 16
-
-  entry start
-
-  ; function that sorts array of uint32_t, given its size_t
-  start:
-	  and	rsp, 0xFFFFFFFFFFFFFFF0
-    sub rsp, 32
-    
-    lea eax, [data]
-    mov DWORD [rsp + 20], eax ; stores data in the stack as local variable
-    lea rax, [size]
-    mov QWORD [rsp + 16], rax ; stores the value of arr size in the stack
-    
-    call sort_arr
-
-    call print_arr
-
-	  xor	rdi,rdi
-	  call	exit
-
-  sort_arr:
+  ; func that adds three nums and returns the result
+  _func:
+    push rbp
     mov rbp, rsp
-        
-    ret
+    sub rsp, 16
 
+    ; as function can easily change each of the following registers:
+    ; RAX, RCX, RDX, RSI, RDI, R8-R11 we will use them for the vars.
+    ; Also note the order in which the args are passed:
+    ; RDI, RSI, RDX, RCX, R8, R9. So,
+    
+    ; RSI - size of array
+    ; EDI - the pointer to data.
 
-  print_arr:
-    ; loads all the data needed to call debug print for 4 elms,
-    ; basing on the calling conventions RDI, RSI, RDX, RCX, R8, R9
-    lea	rdi,   [msg]
-    mov esi, DWORD [data]
-    mov edx, DWORD [data + 4]
-    mov ecx, DWORD [data + 8]
-    mov r8d, DWORD [data + 12]
+    ; let's use r9 and r9 for indexes as it will be easier to
+    ; distinuish them
+    mov r8, 1
 
-    push rax ; stores the value of rax register
-    xor rax, rax ; convention call
-	  call printf
-    pop rax
+    cmp r8, rsi ; int i = 1
+    jb outer_loop ; if i < size: go to loop
+    jge outer_loop_end ; if i >= size : end the loop, return the res
 
-    ret
+outer_loop:
+    mov r10d, [rdi + 4 * r8] ; key = data[i]
+    mov r9, r8               ; j = i - 1
+    jmp inner_loop
+    
+inner_loop:
+    ; decrements j, checks whether it is >= than 0 and procceeds with loop
+    cmp r9, 0
+    je inner_loop_end
+    sub r9, 1
 
-section '__data' align 16
+    cmp [rdi + 4 * r9], r10d           ; data[j] > key
+    
+    jbe inner_loop_end      ; if data[j] <= key, inner loop should be terminated,
+                            ; otherwise, increment loop vars and procceed
+    
 
-    data dd 4, 3, 2, 1
-    size dq 4
-    msg db 'Result %u %u %u %u',0Ah,0
+    mov r11d, [rdi + 4 * r9] ; data[j + 1] = data[j]
+    mov [rdi + 4 * r9 + 4], r11d
+
+    jmp inner_loop
+
+inner_loop_end:
+    mov [rdi + 4 * r9 + 4], r10d ; data[j + 1] = key
+
+    ; increments variable i and proceeds with the loop
+    ; (or) terminates it
+    add r8, 1
+    cmp r8, rsi
+    jl outer_loop
+    je outer_loop_end
+
+outer_loop_end:
+    add rsp, 16 ; restore the stack
+    pop rbp     ; restore rbp
+    ret         ; return from the function
