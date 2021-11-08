@@ -40,9 +40,10 @@ outer_loop:
     
 inner_loop:
     ; decrements j, checks whether it is >= than 0 and procceeds with loop
-    cmp r9, 0
-    je inner_loop_end
     sub r9, 1
+    cmp r9, 0
+    jo inner_loop_end ; jumps if overflow has happened
+
 
     cmp [rdi + 4 * r9], r10d           ; data[j] > key
     
