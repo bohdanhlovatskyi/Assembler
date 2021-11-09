@@ -2,7 +2,7 @@
 #include "main.h"
 
 
-// void func(int32_t* a, int32_t* b, uint8_t* result, size_t size);
+// struct linked_list_node* func (struct linked_list_node* node);
 int main(void) {
 
     struct linked_list_node e = { .data = 1, .next = NULL };
@@ -12,9 +12,9 @@ int main(void) {
 
     pp(&head);
 
-    func(&head);
+    struct linked_list_node *res = func(&head);
 
-    pp(&head);
+    pp(res);
 }
 
 void pp(struct linked_list_node* ll) {

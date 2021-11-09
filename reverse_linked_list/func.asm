@@ -31,20 +31,20 @@ nxt_elm:
     cmp r8, 0       ; while curr
     je end_reached
 
-    mov rax, [r8 + 8]  ; dereference address stored in rdi and 
-                    ; stored it back in the rax
-                    ; next = curr.next
+    mov rax, [r8 + 8]   ; dereference address stored in r10 and 
+                        ; stored it back in the rax
+                        ; remember that the struct is aligned by the
+                        ; greatest its field, so we need to add here 8
+                        ; next = curr.next
 
-    lea r10, [r8 + 8]
-    mov r10, r9     ; curr.next = prev
+    mov [r8 + 8], r9   ; curr.next = prev
 
     mov r9, r8      ; prev = curr
     mov r8, rax     ; curr = next
     jmp nxt_elm
 
 end_reached:
-
-    mov rax, [r9]   ; return value into rax (or rdx if we need more)
+    mov rax, r9   ; return value into rax (or rdx if we need more)
 
     add rsp, 16     ; restore the stack
     pop rbp         ; restore rbp
