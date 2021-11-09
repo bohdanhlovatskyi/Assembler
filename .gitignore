@@ -7,3 +7,5 @@ examples
 .vscode
 .DS_Store
 *.out
+*.dSYM
+*.gch
