@@ -23,7 +23,7 @@ section '__TEXT':'__text'
     ; RDI, RSI, RDX, RCX, R8, R9. So,
     
     ; RSI - size of array
-    ; EDI - the pointer to data.
+    ; RDI - the pointer to data.
 
     ; let's use r9 and r9 for indexes as it will be easier to
     ; distinuish them
