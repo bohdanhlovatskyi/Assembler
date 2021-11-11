@@ -17,6 +17,10 @@ import func,'_func'
 
 segment '__TEXT' readable executable
 
+  section '__cstring' align 4
+    msg: db '%u     ', 0
+    newline: db 0Ah, 0
+
   section '__text' align 16
 
     entry start
@@ -25,8 +29,6 @@ start:
 	; and	rsp, 0xFFFFFFFFFFFFFFF0
 	sub	rsp, 0x10
 
-    ; call func
-    
     ; RDI, RSI, RDX, RCX, R8, R9. So,
 	call print_arr
 
@@ -41,25 +43,31 @@ start:
 	call	exit
 
   print_arr:
-     push rbp
-     mov rbp, rsp
-     ; loads all the data needed to call debug print for 4 elms,
-     ; basing on the calling conventions RDI, RSI, RDX, RCX, R8, R9
-     lea rdi, [dbg_msg]
-     mov esi, DWORD [data]
-     mov edx, DWORD [data + 4]
-     mov ecx, DWORD [data + 8]
-     mov r8d, DWORD [data + 12]
+    push rbp
+    mov rbp, rsp
 
-     push rax ; stores the value of rax register
-     xor rax, rax ; convention call
- 	 call printf
-     pop rax
-     pop rbp
-     ret
+    mov r13, 0 ; counter for size
+    pl:
+        lea rax, [size] ; loads address of size variable into the rax
+        cmp r13, [rax]
+        jnl end_of_loop
+    
+        lea rdi, [msg]
+        lea rax, [data]
+        mov rsi, [rax + 4 * r13] ; data[i]
+        xor rax, rax
+        call printf
+    
+        inc r13
+        jmp pl
 
-    section '__cstring' align 4
-    dbg_msg: db '[arr]: %u %u %u %u',0Ah,0
+   end_of_loop:
+    lea rdi, [newline]
+    xor rax, rax
+    call printf
+
+    pop rbp
+    ret
 
 segment '__DATA' readable writeable
   section '__data' align 16
